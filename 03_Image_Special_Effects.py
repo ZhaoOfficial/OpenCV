@@ -97,12 +97,11 @@ cv2.waitKey(timeout)
 
 
 # bad enhance
-dstImage = np.zeros((srcImage.shape[0], srcImage.shape[1], 3))
-dstImage[:, :, 0] = (srcImage[:, :, 0] * 1.01)
-dstImage[:, :, 1] = (srcImage[:, :, 1] * 1.01)
-dstImage[:, :, 2] = (srcImage[:, :, 2] * 1.01)
-dstImage = np.uint8(dstImage)
+dstImage = srcImage
+dstImage = dstImage.astype(np.float32)
+dstImage *= 1.2
 dstImage[dstImage > 255] = 255
+dstImage = np.uint8(dstImage)
 cv2.imshow('enhance', dstImage)
 cv2.waitKey(timeout)
 
