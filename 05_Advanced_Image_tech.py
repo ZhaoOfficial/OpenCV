@@ -84,16 +84,122 @@ def drawColorHistogramSelfMade(image, channel):
             count[srcImage[i, j, channel]] += 1
 
     result = cv2.calcHist([image], [0], None, [256], [0.0, 255.0])
-    minHeight, maxHeight, minCoor, maxCoor = cv2.minMaxLoc(result)
+    maxHeight = cv2.minMaxLoc(result)[1]
     histogramImage = np.zeros((512, 512, 3))
     for i in range(256):
         cv2.line(histogramImage, (2 * i, 512), (2 * i, 512 - int((512 / maxHeight) * result[i])), color, 2)
     cv2.imshow(windowName, histogramImage)
     cv2.waitKey(timeout)
 
-for i in range(3):
-    drawColorHistogramSelfMade(srcImage[:, :, i], i)
+# for i in range(3):
+#     drawColorHistogramSelfMade(srcImage[:, :, i], i)
 
 
-def x():
-    pass
+
+# equalized histogram of color self made
+def equalizedHistogramSelfMade(image:np.ndarray):
+    H = image.shape[0]
+    W = image.shape[1]
+
+    count_b = np.zeros(256, np.float32)
+    count_g = np.zeros(256, np.float32)
+    count_r = np.zeros(256, np.float32)
+
+    for i in range(H):
+        for j in range(W):
+            (b, g, r) = image[i, j]
+            count_b[b] += 1
+            count_g[g] += 1
+            count_r[r] += 1
+
+
+    count_b /= (H * W)
+    count_g /= (H * W)
+    count_r /= (H * W)
+
+    for i in range(1, 256):
+        count_b[i] += count_b[i - 1]
+        count_g[i] += count_g[i - 1]
+        count_r[i] += count_r[i - 1]
+
+    map_b = count_b * 255
+    map_g = count_g * 255
+    map_r = count_r * 255
+
+    dstImage = np.zeros((H, W, 3), dtype = np.uint8)
+
+    for i in range(H):
+        for j in range(W):
+            (b, g, r) = image[i, j]
+            b = map_b[b]
+            g = map_g[g]
+            r = map_r[r]
+            dstImage[i, j] = (b, g, r)
+    cv2.imshow('equalized dstImage', dstImage)
+    cv2.waitKey(timeout)
+
+#equalizedHistogramSelfMade(srcImage)
+
+
+
+# enhance the lightness
+dstImage = srcImage
+dstImage = dstImage.astype(np.float32)
+dstImage += 40
+dstImage[dstImage > 255] = 255
+dstImage = dstImage.astype(np.uint8)
+cv2.imshow('enhanced', dstImage)
+cv2.waitKey(timeout)
+
+
+
+# bilateral filter
+# mopi
+dstImage = cv2.bilateralFilter(srcImage, 15, 35, 35)
+cv2.imshow('bilateral', dstImage)
+cv2.waitKey(timeout)
+
+
+
+# Gaussian filter
+# param: image, size, std
+dstImage = cv2.GaussianBlur(srcImage, (3, 3), 1)
+cv2.imshow('gaussian', dstImage)
+cv2.waitKey(timeout)
+
+
+# mean filter
+def meanFilter(image, size):
+
+    H = image.shape[0]
+    W = image.shape[1]
+
+    dstImage = np.zeros((H - size, W - size, 3), dtype = np.uint8)
+
+    for i in range(0, H - size):
+        for j in range(0, W - size):
+            (b, g, r) = np.mean(image[i:i + size, j:j + size], axis = (0, 1))
+            dstImage[i, j] = (b, g, r)
+    cv2.imshow('mean', dstImage)
+    cv2.waitKey(timeout)
+
+meanFilter(srcImage, 6)
+
+
+
+# median filter
+def medianFilter(image, size):
+
+    H = image.shape[0]
+    W = image.shape[1]
+
+    dstImage = np.zeros((H - size, W - size, 3), dtype = np.uint8)
+
+    for i in range(0, H - size):
+        for j in range(0, W - size):
+            (b, g, r) = np.median(image[i:i + size, j:j + size], axis = (0, 1))
+            dstImage[i, j] = (b, g, r)
+    cv2.imshow('median', dstImage)
+    cv2.waitKey(4000)
+
+medianFilter(srcImage, 6)
