@@ -24,7 +24,7 @@ int main()
 	// string image_path = samples::findFile("starry_night.jpg");
 
 	// note here we use an absolute path
-	string image_path = "D:/Mywork/OpenCV/test.jpg";
+	string image_path = "D:/Mywork/OpenCV/SampleImage/palace.jpg";
 
 	// IMREAD_COLOR loads the image in the BGR 8-bit format. This is the default that is used here.
 	// IMREAD_UNCHANGED loads the image as is (including the alpha channel if present)

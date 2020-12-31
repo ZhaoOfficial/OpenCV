@@ -20,7 +20,7 @@ int main()
 {
 	// here A, B, C, D, E use the same (part of) data.
 	// creates just the header parts
-	Mat A = imread("D:/Mywork/OpenCV/test.jpg", IMREAD_COLOR);
+	Mat A = imread("D:/Mywork/OpenCV/SampleImage/palace.jpg", IMREAD_COLOR);
 	// Use the copy constructor
 	Mat B(A);
 	// Assignment operator
